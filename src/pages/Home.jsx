@@ -112,7 +112,7 @@ const data = [
       category:"mens",
       rating:"5",
       image:"https://assets.ajio.com/medias/sys_master/root/20230621/J11r/6492b62ad55b7d0c6395a9f0/-473Wx593H-464079764-maroon-MODEL3.jpg",
-    }
+    } 
   ]
  }
 ]

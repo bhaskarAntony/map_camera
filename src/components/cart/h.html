@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Selected Images</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        .container {
+            position: relative; /* Add position relative to contain absolute positioned text */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            padding: 0;
+        }
+
+        .mainimage {
+            width: 100%;
+            max-height: 100%;
+        }
+
+        .text {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 97%;
+            padding: 10px;
+            min-height: 150px;
+            background-color: #fff;
+            border-radius: 10px;
+            z-index: 100;
+        }
+
+        .map {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Image container -->
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+        Update Data
+    </button>
+
+    <input type="file" id="image-input" multiple>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="locationInput" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="locationInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressInput" class="form-label">Address</label>
+                            <input type="text" class="form-control" id="addressInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateInput" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="dateInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="latitudeInput" class="form-label">Latitude</label>
+                            <input type="number" class="form-control" id="latitudeInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="longitudeInput" class="form-label">Longitude</label>
+                            <input type="number" class="form-control" id="longitudeInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gmtInput" class="form-label">GMT</label>
+                            <input type="text" class="form-control" id="gmtInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="localTimeInput" class="form-label">Local Time</label>
+                            <input type="text" class="form-control" id="localTimeInput">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateDataBtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('image-input').addEventListener('change', function(event) {
+            const container = document.querySelector('.container');
+            container.innerHTML = ''; // Clear previous content
+
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) { // Check if file is an image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.classList.add('mainimage');
+                        img.src = e.target.result;
+                        container.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            // Append text container after appending images
+            const textContainer = document.createElement('div');
+            textContainer.classList.add('text');
+            textContainer.innerHTML = `
+                <div class="d-flex gap-2">
+                    <div class="">
+                        <img src="../../images/map.jpg" alt="" class="map">
+                    </div>
+                    <div class="">
+                        <span class="d-block location fw-bold" id="location"></span>
+                        <small id="address"></small>
+                        <div class="d-flex justify-content-between gap-4">
+                            <div>
+                                <span class="fs-6 d-block" id="date">4</span>
+                                <span class="fs-6  d-flex  gap-3"><span class="fw-bold">Latitude</span><small id="lan"></small></span>
+                                <p class="fs-6  d-flex  gap-3"><span class="fw-bold">Longitude</span><small class="text-end" id="lang"></small></p>
+                            </div>
+                            <div class="w-100">
+                                <span class="d-block fs-6 text-center">823m</span>
+                                <span class="fs-6  d-flex  gap-3 justify-content-between"><span class="fw-bold">GMT</span><small id="gmt"></small></span>
+                                <p class="fs-6  d-flex  gap-3 justify-content-between"><span class="fw-bold">Local Time</span><small id="localtime" class="text-end"></small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(textContainer);
+        });
+
+        // Update button click event
+        document.getElementById('updateDataBtn').addEventListener('click', function() {
+            // Get input values
+            const location = document.getElementById('locationInput').value;
+            const address = document.getElementById('addressInput').value;
+            const date = document.getElementById('dateInput').value;
+            const latitude = document.getElementById('latitudeInput').value;
+            const longitude = document.getElementById('longitudeInput').value;
+            const gmt = document.getElementById('gmtInput').value;
+            const localTime = document.getElementById('localTimeInput').value;
+
+            // Update the data
+            document.getElementById('location').innerText = location;
+            document.getElementById('address').innerText = address;
+            document.getElementById('date').innerText = date;
+            document.getElementById('lan').innerText = latitude;
+            document.getElementById('lang').innerText = longitude;
+            document.getElementById('gmt').innerText = gmt;
+            document.getElementById('localtime').innerText = localTime;
+
+            // Close the modal
+            const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            myModal.hide();
+        });
+    </script>
+</body>
+</html>
